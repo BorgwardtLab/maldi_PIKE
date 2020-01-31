@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "maldi-learn"
+version = "0.1.0"
+description = "Software library for MALDI-TOF preprocessing and machine learning analysis."
+authors = ["Caroline Weis <caroline.weis@bsse.ethz.ch>", "Max Horn <max.horn@bsse.ethz.ch>", "Bastian Rieck <bastian.rieck@bsse.ethz.ch>"]
+readme = "README.md"
+repository = "https://github.com/BorgwardtLab/maldi-learn"
+homepage = "https://github.com/BorgwardtLab/maldi-learn"
+
+[tool.poetry.dependencies]
+python = ">=3.6"
+scikit-learn = "^0.22.1"
+topf = {git = "ssh://git@github.com/BorgwardtLab/Topf.git"}
+pandas = "^0.25.3"
+[tool.poetry.dev-dependencies]
+pytest = "^3.0"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
