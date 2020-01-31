@@ -12,3 +12,6 @@ ismb2020_maldi.egg-info/
 
 # Environment file defining path to data
 .env
+
+# Ignore any `pip` installation files
+pip-wheel-metadata/
