@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "ismb2020_maldi"
+version = "0.1.0"
+description = "Maldi-Tof kernel and GP classifier"
+authors = ["Caroline Weis <caroline.weis@bsse.ethz.ch>", "Max Horn <max.horn@bsse.ethz.ch>", "Dr. Bastian Alexander Rieck <bastian.rieck@bsse.ethz.ch>"]
+readme = "README.md"
+repository = "https://github.com/BorgwardtLab/maldi_PIKE"
+homepage = "https://github.com/BorgwardtLab/maldi_PIKE"
+
+[tool.poetry.dependencies]
+python = "^3.7"
+pandas = "^0.25.3"
+python-dotenv = "^0.10.3"
+maldi-learn = {path = "maldi-learn/"}
+scikit-learn = {git = "https://github.com/BorgwardtLab/scikit-learn.git", rev = "maldi-learn"}
+imbalanced-learn = "^0.6.1"
+json-tricks = "^3.13.5"
+tqdm = "^4.41.1"
+matplotlib = "^3.1.2"
+seaborn = "^0.10.0"
+[tool.poetry.dev-dependencies]
+pytest = "^3.0"
+ipython = "^7.11.1"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
