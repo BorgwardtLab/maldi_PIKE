@@ -1,0 +1,14 @@
+# Python cache
+__pycache__/
+
+# Pyenv files
+.python-version
+
+# Poetry
+# Poetry lock
+poetry.lock
+# Egg generated when running poetry install
+ismb2020_maldi.egg-info/
+
+# Environment file defining path to data
+.env
