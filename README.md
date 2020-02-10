@@ -21,4 +21,14 @@ Follow the instructions given by `poetry`.
 
 # Example behaviour of PIKE
 
+Figure 2 in the paper:
+
 ![PIKE_behaviour](PIKE_behaviour.png)
+
+Code to recreate this graphic in matplotlib.
+
+```python
+import ismb2020_maldi
+```
+
+This repository is work in progress.
