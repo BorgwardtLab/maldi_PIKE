@@ -10,13 +10,14 @@ mass peaks.
 # Dependencies
 
 - Python 3.7
-- project toml dependencies
+- packages listed in `pyproject.toml`
 
 # Installation
 
 - Clone the repository
 - `poetry install`
-Follow the instructions given by `poetry`
+
+Follow the instructions given by `poetry`.
 
 # Example behaviour of PIKE
 
