@@ -7,10 +7,6 @@ from maldi_learn.data import MaldiTofSpectrum
 
 from maldi_learn.preprocessing import ScaleNormalizer
 
-from sklearn.decomposition import KernelPCA
-
-from joblib import parallel_backend
-
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -48,19 +44,26 @@ if __name__ == '__main__':
     x_min = np.min(spectrum.mass_to_charge_ratios)
     x_max = np.max(spectrum.mass_to_charge_ratios)
 
-    np.savetxt('Example_peaks.txt', spectrum, fmt='%.2f')
+    fig, ax = plt.subplots(4, 1, sharex=True)
 
-    for sigma in [1, 10, 100]:
+    ax[0].stem(spectrum.mass_to_charge_ratios, spectrum.intensities,
+              linefmt='k-', basefmt='black', markerfmt='None',
+              use_line_collection=True)
 
-        with open(f'Example_spectrum_smooth_sigma{sigma}.txt', 'w') as f:
-            X = np.linspace(x_min, x_max, 300)
-            Y = [feature_map(spectrum, x, sigma) for x in X]
+    for axis in ax:
+        axis.set_ylim(0, 6)
 
-            for x, y in zip(X, Y):
-                print(x, y, file=f)
+        axis.spines['top'].set_visible(False)
+        axis.spines['right'].set_visible(False)
 
-        plt.stem(spectrum.mass_to_charge_ratios, spectrum.intensities,
-                linefmt='k-', basefmt='black')
-        plt.plot(X, Y)
+        axis.set_yticks([0, 2, 4, 6])
+
+    for axis, sigma in zip(ax[1:], [1, 10, 100]):
+
+        X = np.linspace(x_min, x_max, 300)
+        Y = [feature_map(spectrum, x, sigma) for x in X]
+
+        axis.plot(X, Y)
+
 
     plt.show()
