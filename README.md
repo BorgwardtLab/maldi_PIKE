@@ -25,10 +25,16 @@ Figure 2:
 
 ![PIKE_behaviour](PIKE_behaviour.png)
 
-Code to recreate this graphic in matplotlib.
+Code to recreate this graphic in matplotlib can be found in
+`ismb2020_maldi/visualise_feature_map.py`. Use the script as
+follows:
 
-```python
-import ismb2020_maldi
 ```
+poetry run python ismb2020_maldi/visualise_feature_map.py data/Example_peaks.txt
+```
+
+This should result in the following plot:
+
+![PIKE_behaviour_matplotlib](PIKE_behaviour_matplotlib.png)
 
 This repository is work in progress.
