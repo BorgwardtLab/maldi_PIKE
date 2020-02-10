@@ -21,7 +21,7 @@ Follow the instructions given by `poetry`.
 
 # Example behaviour of PIKE
 
-Figure 2 in the paper:
+Figure 2:
 
 ![PIKE_behaviour](PIKE_behaviour.png)
 
