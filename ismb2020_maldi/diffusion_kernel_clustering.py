@@ -3,12 +3,10 @@
 # Trains a diffusion kernel Gaussian Process classifier and reports the
 # results on all tasks.
 
-from ismb2020_maldi.datasets import AntibioticResistanceDataset
-from ismb2020_maldi.datasets import EcoliAntibioticResistanceDataset
-from ismb2020_maldi.datasets import KpneuAntibioticResistanceDataset
-from ismb2020_maldi.datasets import SaureusAntibioticResistanceDataset
+from ismb2020_maldi.datasets import ClusterAntibioticResistanceDataset
 
 from maldi_learn.kernels import DiffusionKernel
+from maldi_learn.vectorization import BinningVectorizer
 from maldi_learn.preprocessing import TotalIonCurrentNormalizer
 from maldi_learn.preprocessing import SubsetPeaksTransformer
 from maldi_learn.preprocessing import ScaleNormalizer
@@ -36,31 +34,58 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-s', '--species', type=str, required=True)
     parser.add_argument('-a', '--antibiotic', type=str, required=True)
+    parser.add_argument('-c', '--cluster_based_split', type=bool, default=False, required=True)
+    parser.add_argument('-f', '--cluster_feature_selection', type=bool, default=False, required=False)
+    parser.add_argument('-N', '--n_cluster', type=int, required=False, default=None)
+    parser.add_argument('-l', '--cluster_linkage', type=str, required=False, default='ward')
     parser.add_argument('-o', '--output', type=str)
-    parser.add_argument('-S', '--seed', type=int, required=False,
-            default=2020)
-    parser.add_argument('-p', '--peaks', type=int, required=False,
-            default=None)
+    parser.add_argument('-S', '--seed', type=int, required=False, default=2020)
     parser.add_argument('-n', '--normalize', action='store_true')
     parser.add_argument('--suffix', default='')
 
     args = parser.parse_args()
 
-    species_to_dataset = {
-        'ecoli': EcoliAntibioticResistanceDataset,
-        'kpneu': KpneuAntibioticResistanceDataset,
-        'saureus': SaureusAntibioticResistanceDataset
-    }
-
-    dataset = species_to_dataset[args.species](
-                test_size=0.20,
+    dataset = ClusterAntibioticResistanceDataset(
+                species=args.species,
                 antibiotic=args.antibiotic,
+                test_size=0.20,
+                cluster_based_split=args.cluster_based_split,
+                cluster_feature_selection=args.cluster_feature_selection,
+                bv=BinningVectorizer(n_bins=6000,
+                                     min_bin=2000,
+                                     max_bin=20000),
+                n_cluster=args.n_cluster,
+                cluster_linkage=args.cluster_linkage,
                 random_seed=args.seed,
                 suffix=args.suffix
     )
 
-    X_train, y_train = dataset.training_data
-    X_test, y_test = dataset.testing_data
+    X_train, y_train = dataset.X_train, dataset.y_train
+    X_test, y_test = dataset.X_test, dataset.y_test
+
+    # Static information about the data set; will be extended later on
+    # with information about the training itself.
+    data = {
+        'seed': args.seed,
+        'species': args.species,
+        'antibiotic': args.antibiotic,
+        'n_peaks': None,
+        'driams_root': os.getenv('DRIAMS_ROOT_PATH'),
+        'cluster_data_dir': os.getenv('CLUSTER_DATA_DIR'),
+        'classification_data_dir': os.getenv('CLASSIFICATION_DATA_DIR'),
+        'normalize': args.normalize
+    }
+
+    data['linkage'] = dataset.linkage
+    data['n_cluster'] = dataset.n_cluster
+
+    if getattr(dataset, 'fs', None):
+        data['feature_selection'] = True
+
+    if getattr(dataset, 'davies_bouldin_score', None):
+        data['davies_bouldin_score'] = dataset.davies_bouldin_score
+        data['silhouette_score'] = dataset.silhouette_score
+        data['calinski_harabasz_score'] = dataset.calinski_harabasz_score
 
     # Perform random oversampling in order to ensure class balance. This
     # is strictly speaking not required but we do it for the GP as well,
@@ -72,6 +97,7 @@ if __name__ == '__main__':
         [i for i in range(0, len(X_train))]).reshape(-1, 1)
 
     X_indices, y_train = ros.fit_sample(X_indices, y_train)
+    X_train = np.asarray(X_train, dtype=object)
     X_train = np.take(X_train, X_indices.ravel())
 
     # Normalise on demand. This is an *external* flag because by
@@ -83,7 +109,7 @@ if __name__ == '__main__':
         X_test = tic.transform(X_test)
 
     # Sparsify the data by restricting everything to the peaks only.
-    st = SubsetPeaksTransformer(n_peaks=args.peaks)
+    st = SubsetPeaksTransformer(n_peaks=None)
 
     X_train = st.fit_transform(X_train)
     X_test = st.transform(X_test)
@@ -97,17 +123,6 @@ if __name__ == '__main__':
         X_train = sn.fit_transform(X_train)
         X_test = sn.transform(X_test)
 
-    # Static information about the data set; will be extended later on
-    # with information about the training itself.
-    data = {
-        'seed': args.seed,
-        'species': args.species,
-        'antibiotic': args.antibiotic,
-        'n_peaks': args.peaks,
-        'spectra_path': os.getenv('ANTIBIOTICS_SPECTRA_PATH'),
-        'endpoint_path': os.getenv('ANTIBIOTICS_ENDPOINT_PATH'),
-        'normalize': args.normalize,
-    }
 
     kernel = DiffusionKernel(sigma=1)
     clf = GaussianProcessClassifier(kernel=kernel)
