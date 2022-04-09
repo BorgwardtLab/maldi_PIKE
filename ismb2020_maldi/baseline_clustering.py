@@ -161,6 +161,10 @@ if __name__ == '__main__':
     data['accuracy'] = 100 * accuracy
 
     if args.output is not None:
+        # Create output directory if it does not exist yet
+        if not os.path.exists(args.output):
+            os.makedirs(args.output)
+        # Save results
         with open(args.output, 'w') as f:
             jt.dump(data, f, indent=4)
     else:
