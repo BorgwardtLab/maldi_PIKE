@@ -151,8 +151,8 @@ if __name__ == '__main__':
 
     if args.output is not None:
         # Create output directory if it does not exist yet
-        if not os.path.exists(args.output):
-            os.makedirs(args.output)
+        if not os.path.exists(os.path.dirname(args.output)):
+            os.makedirs(os.path.dirname(args.output))
         # Save results
         with open(args.output, 'w') as f:
             jt.dump(data, f, indent=4)
