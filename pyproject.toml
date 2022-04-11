@@ -10,7 +10,7 @@ homepage = "https://github.com/BorgwardtLab/maldi_PIKE"
 [tool.poetry.dependencies]
 python = "^3.7"
 pandas = "^0.25.3"
-python-dotenv = "^0.10.3"
+python-dotenv = ">=0.10.3"
 maldi-learn = {path = "maldi-learn/"}
 scikit-learn = {git = "https://github.com/BorgwardtLab/scikit-learn.git", rev = "maldi-learn"}
 imbalanced-learn = "^0.6.1"

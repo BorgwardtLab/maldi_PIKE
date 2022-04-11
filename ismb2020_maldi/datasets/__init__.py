@@ -1,5 +1,5 @@
 """Datasets."""
 from .dataset import Dataset
-from .antibiotics import AntibioticResistanceDataset, EcoliAntibioticResistanceDataset, \
-                        SaureusAntibioticResistanceDataset, KpneuAntibioticResistanceDataset
-__all__ = ['Dataset', 'AntibioticResistanceDataset', 'EcoliAntibioticResistanceDataset', 'SaureusAntibioticResistanceDataset', 'KpneuAntibioticResistanceDataset']
+from .antibiotics import AntibioticResistanceDataset, ClusterAntibioticResistanceDataset
+
+__all__ = ['Dataset', 'AntibioticResistanceDataset', 'ClusterAntibioticResistanceDataset']
